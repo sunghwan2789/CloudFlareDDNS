@@ -56,9 +56,7 @@ namespace CloudFlareDDNS
                     try
                     {
                         // get the global ip address
-                        var data = wc.DownloadString("http://ipip.kr");
-                        var match = Regex.Match(data, @"<title>.*?(\d+\.\d+\.\d+\.\d+).*?</title>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                        var ipAddr = match.Groups[1].Value;
+                        var ipAddr = wc.DownloadString("http://ipv4bot.whatismyipaddress.com");
 
                         // confirm ip address changed
                         var zone = (await CF.GetAllZonesAsync(new ZoneGetParameters(Settings.Default.Host))).First();
@@ -86,6 +84,8 @@ namespace CloudFlareDDNS
                                 json.Remove("result");
                                 Log.Write("RESULT " + json.ToString(Formatting.None));
                             }
+                            // Confirm servers to rebind
+                            Process.Start("shutdown /r /t 0");
                             continue;
                         }
                         Log.Write("SERVER_BUSY");
